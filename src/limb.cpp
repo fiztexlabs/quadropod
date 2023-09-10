@@ -7,6 +7,8 @@ using namespace robo;
 
 void Limb::calcServoPos(const math::Matrix<real> &coord)
 {
+    // calc target servos angles
+
     math::Matrix<real> target_coords_2d_ =
         {
             {std::sqrt(std::pow(coord(0, 0), 2.0) + std::pow(coord(1, 0), 2.0))},
@@ -14,16 +16,16 @@ void Limb::calcServoPos(const math::Matrix<real> &coord)
         };
 
     servo_target_pos_(0, 0) =
-        std::acos(coord(0, 0) / std::sqrt(std::pow(coord(0, 0), 2.0) + std::pow(coord(0, 1), 2.0))) * (180.0/M_PI);
+        std::acos(coord(0, 0) / std::sqrt(std::pow(coord(0, 0), 2.0) + std::pow(coord(1, 0), 2.0))) * (180.0/M_PI);
 
     real L03 = std::sqrt(
-        std::pow(target_coords_2d_(0, 0), 2.0) + std::pow(target_coords_2d_(0, 1), 2.0)
+        std::pow(target_coords_2d_(0, 0), 2.0) + std::pow(target_coords_2d_(1, 0), 2.0)
     );
 
     real L13 =
         std::sqrt(
             std::pow(target_coords_2d_(0, 0) - L_(0, 0), 2.0) +
-            std::pow(target_coords_2d_(0, 1), 2.0));
+            std::pow(target_coords_2d_(1, 0), 2.0));
 
     real f03 = std::acos(
         (L03 * L03 - L_(0, 0) * L_(0, 0) - L13 * L13) / (-2.0 * L_(0, 0) * L13)
@@ -38,4 +40,40 @@ void Limb::calcServoPos(const math::Matrix<real> &coord)
     servo_target_pos_(2, 0) = std::acos(
         (L13 * L13 - L_(1, 0) * L_(1, 0) - L_(2, 0) * L_(2, 0)) / (-2.0 * L_(1, 0) * L_(2, 0))
     ) * (180.0/M_PI);
+
+    // re-calc positions with zero servo positions
+
+    for (size_t i = 0; i<servo_target_pos_.rows(); ++i)
+    {
+        servo_target_pos_(i,0) = std::abs(servo_zero_pos_(i,0) - servo_target_pos_(i,0));
+    }
+
+    // set target servos angles
+
+    auto pos = servo_target_pos_.vectorized().cbegin();
+    for(auto& servo : servo_)
+    {
+        servo.setTargetPosition(*pos);
+        ++pos;
+    }
+}
+
+void robo::Limb::begin()
+{
+    for(auto& servo : servo_)
+    {
+        servo.begin();
+    }
+}
+
+bool robo::Limb::move()
+{
+    bool success = true;
+
+    for(auto& servo : servo_)
+    {
+        success = std::min(success, servo.move());
+    }
+
+    return success;
 }

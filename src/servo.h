@@ -7,12 +7,13 @@
 namespace robo
 {
     /**
-    * @brief Control servo throw PCA9685
+    * @brief Control servo with PCA9685
+    * @details Class allows to smooth move of servos
     */
     class Servo
     {
         private:
-            Adafruit_PWMServoDriver* pwm_;
+            Adafruit_PWMServoDriver* pwm_ = nullptr;
 
             /// @brief PWM bit depth
             int bit_depth_ = 12;
@@ -39,19 +40,10 @@ namespace robo
             real max_angle_;
 
             /// @brief Servo pin
-            int servo_pin_;
-
-            /// @brief Zero position angle
-            real zero_pos_ = 0.0;
-
-            /// @brief Target servo position
-            real target_pos_ = 0.0;
-
-            /// @brief Current servo position
-            real current_pos_ = 0.0;
+            int servo_pin_ = 0;
 
             /// @brief Accelaration [deg/s2]
-            real acceleration_ = 10.0;
+            real acceleration_ = 3000.0;
 
             /// @brief Current speed [deg/s]
             real speed_ = 0.0;
@@ -65,19 +57,43 @@ namespace robo
             /// @brief Last time pos 
             unsigned long t_l_ = 0.0;
 
+            /// @brief Target servo position
+            real target_pos_ = 0.0;
+
+            /// @brief Current servo position
+            real current_pos_ = 0.0;
+
         public:
+            /**
+             * @brief Construct a new Servo object
+             * 
+             * @param servo_pin: PCA9685 pin, to be atach with servo
+             * @param pwm: PWM object
+             */
             Servo(
                 const int servo_pin,
-                Adafruit_PWMServoDriver* pwm,
+                Adafruit_PWMServoDriver* pwm
+            ):
+            Servo()
+            {
+                pwm_ = pwm;
+                servo_pin_ = servo_pin;
+            }
+
+            /**
+             * @brief Construct a new Servo object
+             * 
+             * @param max_angle: Maximum servo angle [deg]
+             * @param pwm_freq: Frequency of servo PWM [Hz]
+             * @param low_imp: Impulse width, correspond to low servo position [ms]
+             * @param hight_imp: Impulse width, correspond to hight servo position [ms]
+             */
+            Servo(
                 const real max_angle = 180,
                 const int pwm_freq = 50,
                 const real low_imp = 0.5,
-                const real hight_imp = 2.4,
-                const int wire_sda = 4,
-                const int wire_scl = 5
+                const real hight_imp = 2.4
             ):
-            servo_pin_(servo_pin),
-            pwm_(pwm),
             max_angle_(max_angle),
             pwm_freq_(pwm_freq),
             low_imp_(low_imp),
@@ -91,15 +107,18 @@ namespace robo
             {
             }
 
-            /// @brief Set zero servo position
-            void setZeroPosition(const real zero_pos);
-
             /// @brief Function start pwm and wire objets
             void begin();
 
-            /// @brief
-            void move(const real target_pos);
+            /// @brief Set target position of servo in [deg]
+            void setTargetPosition(const real target_pos);
 
-            bool tick();
+            /**
+             * @brief Move servo to target position at each controller's loop iteration
+             * 
+             * @return true if current position is equal to the target position
+             * @return false if current position isn't equal to target position
+             */
+            bool move();
     };
 }

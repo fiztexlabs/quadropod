@@ -3,19 +3,32 @@
 #include <servo.h>
 #include <Adafruit_PWMServoDriver.h>
 #include <Wire.h>
+#include <libmath/matrix.h>
+#include <limb.h>
 
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x40, Wire);
 
-// const int servo_low = 4096*0.025;
-// const int servo_hight = 4096*0.12;
-
-robo::Servo servo(4, &pwm);
+robo::Limb leg1 = robo::Limb(
+    {
+      {37.e-3},
+      {58.e-3},
+      {79.e-3}
+    },
+    {6, 5, 4},
+    &pwm,
+    {
+      {0.0},
+      {270.0},
+      {180.0}
+    },
+    "leg1"
+    );
 
 // GPIO the servo is attached to
 
 // Replace with your network credentials
-const char* ssid     = "SheldonWiFi_2.4GHz";
-const char* password = "Supernova2021";
+const char *ssid = "SheldonWiFi_2.4GHz";
+const char *password = "Supernova2021";
 
 // Set web server port number to 80
 WiFiServer server(80);
@@ -28,16 +41,16 @@ String valueString = String(5);
 int pos1 = 0;
 int pos2 = 0;
 
-void setup() {
-  
-	Serial.begin(115200);
+void setup()
+{
+
+  Serial.begin(115200);
 
   Wire.begin(4, 5);
 
   pwm.begin();
-  
-  servo.begin();
 
+  leg1.begin();
 
   // pwm.begin();
   // pwm.setPWMFreq(50);
@@ -46,7 +59,8 @@ void setup() {
   Serial.print("Connecting to ");
   Serial.println(ssid);
   WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED) {
+  while (WiFi.status() != WL_CONNECTED)
+  {
     delay(500);
     Serial.print(".");
   }
@@ -58,23 +72,30 @@ void setup() {
   server.begin();
 }
 
-void loop() {
-  servo.tick();
+void loop()
+{
+  leg1.move();
+  // Serial.println(servo.current_pos_);
 
-  WiFiClient client = server.available();   // Listen for incoming clients
+  WiFiClient client = server.available(); // Listen for incoming clients
 
-  if (client) {                             // If a new client connects,
-    Serial.println("New Client.");          // print a message out in the serial port
-    String currentLine = "";                // make a String to hold incoming data from the client
-    while (client.connected()) {            // loop while the client's connected
-      if (client.available()) {             // if there's bytes to read from the client,
-        char c = client.read();             // read a byte, then
-        Serial.write(c);                    // print it out the serial monitor
+  if (client)
+  {                                // If a new client connects,
+    Serial.println("New Client."); // print a message out in the serial port
+    String currentLine = "";       // make a String to hold incoming data from the client
+    while (client.connected())
+    { // loop while the client's connected
+      if (client.available())
+      {                         // if there's bytes to read from the client,
+        char c = client.read(); // read a byte, then
+        Serial.write(c);        // print it out the serial monitor
         header += c;
-        if (c == '\n') {                    // if the byte is a newline character
+        if (c == '\n')
+        { // if the byte is a newline character
           // if the current line is blank, you got two newline characters in a row.
           // that's the end of the client HTTP request, so send a response:
-          if (currentLine.length() == 0) {
+          if (currentLine.length() == 0)
+          {
             // HTTP headers always start with a response code (e.g. HTTP/1.1 200 OK)
             // and a content-type so the client knows what's coming, then a blank line:
             client.println("HTTP/1.1 200 OK");
@@ -105,39 +126,36 @@ void loop() {
 
             client.println("</body></html>");
 
-            //GET /?value=180& HTTP/1.1
-            if (header.indexOf("GET /?value=") >= 0) {
+            // GET /?value=180& HTTP/1.1
+            if (header.indexOf("GET /?value=") >= 0)
+            {
               pos1 = header.indexOf('=');
               pos2 = header.indexOf('&');
               valueString = header.substring(pos1 + 1, pos2);
 
-              //Rotate the servo
-              servo.move(valueString.toInt());
-              //pwm.setPWM(0, 0, map(valueString.toInt(),0,180,servo_low,servo_hight));
-              //pwm.setPWM(1, 0, map(valueString.toInt(),0,180,servo_low,servo_hight));
-              //pwm.setPWM(2, 0, map(valueString.toInt(),0,180,servo_low,servo_hight));
-              //pwm.setPWM(4, 0, map(valueString.toInt(),0,180,servo_low,servo_hight));
-              //pwm.setPWM(5, 0, map(valueString.toInt(),0,180,servo_low,servo_hight));
-              //pwm.setPWM(6, 0, map(valueString.toInt(),0,180,servo_low,servo_hight));
-              //pwm.setPWM(8, 0, map(valueString.toInt(),0,180,servo_low,servo_hight));
-              //pwm.setPWM(9, 0, map(valueString.toInt(),0,180,servo_low,servo_hight));
-              //pwm.setPWM(10, 0, map(valueString.toInt(),0,180,servo_low,servo_hight));
-              //pwm.setPWM(12, 0, map(valueString.toInt(),0,180,servo_low,servo_hight));
-              //pwm.setPWM(13, 0, map(valueString.toInt(),0,180,servo_low,servo_hight));
-              //pwm.setPWM(14, 0, map(valueString.toInt(),0,180,servo_low,servo_hight));
-
-              // Serial.println(map(valueString.toInt(),0,180,servo_low,servo_hight));
+              // Rotate the servo
+              leg1.calcServoPos(
+                {
+                  {0.0},
+                  {58.e-3},
+                  {valueString.toInt()*1.e-3}
+                }
+              );
               // Serial.println(map(180-valueString.toInt(),0,180,servo_low,servo_hight));
             }
             // The HTTP response ends with another blank line
             client.println();
             // Break out of the while loop
             break;
-          } else { // if you got a newline, then clear currentLine
+          }
+          else
+          { // if you got a newline, then clear currentLine
             currentLine = "";
           }
-        } else if (c != '\r') {  // if you got anything else but a carriage return character,
-          currentLine += c;      // add it to the end of the currentLine
+        }
+        else if (c != '\r')
+        {                   // if you got anything else but a carriage return character,
+          currentLine += c; // add it to the end of the currentLine
         }
       }
     }
