@@ -1,12 +1,15 @@
 #include <Arduino.h>
 #include <WiFi.h>
+#include <servo.h>
 #include <Adafruit_PWMServoDriver.h>
 #include <Wire.h>
 
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x40, Wire);
 
-const int servo_low = 4096*0.025;
-const int servo_hight = 4096*0.12;
+// const int servo_low = 4096*0.025;
+// const int servo_hight = 4096*0.12;
+
+robo::Servo servo(4, &pwm);
 
 // GPIO the servo is attached to
 
@@ -32,7 +35,12 @@ void setup() {
   Wire.begin(4, 5);
 
   pwm.begin();
-  pwm.setPWMFreq(50);
+  
+  servo.begin();
+
+
+  // pwm.begin();
+  // pwm.setPWMFreq(50);
 
   // Connect to Wi-Fi network with SSID and password
   Serial.print("Connecting to ");
@@ -51,6 +59,8 @@ void setup() {
 }
 
 void loop() {
+  servo.tick();
+
   WiFiClient client = server.available();   // Listen for incoming clients
 
   if (client) {                             // If a new client connects,
@@ -102,20 +112,21 @@ void loop() {
               valueString = header.substring(pos1 + 1, pos2);
 
               //Rotate the servo
-              pwm.setPWM(0, 0, map(valueString.toInt(),0,180,servo_low,servo_hight));
-              pwm.setPWM(1, 0, map(valueString.toInt(),0,180,servo_low,servo_hight));
-              pwm.setPWM(2, 0, map(valueString.toInt(),0,180,servo_low,servo_hight));
-              pwm.setPWM(4, 0, map(valueString.toInt(),0,180,servo_low,servo_hight));
-              pwm.setPWM(5, 0, map(valueString.toInt(),0,180,servo_low,servo_hight));
-              pwm.setPWM(6, 0, map(valueString.toInt(),0,180,servo_low,servo_hight));
-              pwm.setPWM(8, 0, map(valueString.toInt(),0,180,servo_low,servo_hight));
-              pwm.setPWM(9, 0, map(valueString.toInt(),0,180,servo_low,servo_hight));
-              pwm.setPWM(10, 0, map(valueString.toInt(),0,180,servo_low,servo_hight));
-              pwm.setPWM(12, 0, map(valueString.toInt(),0,180,servo_low,servo_hight));
-              pwm.setPWM(13, 0, map(valueString.toInt(),0,180,servo_low,servo_hight));
-              pwm.setPWM(14, 0, map(valueString.toInt(),0,180,servo_low,servo_hight));
+              servo.move(valueString.toInt());
+              //pwm.setPWM(0, 0, map(valueString.toInt(),0,180,servo_low,servo_hight));
+              //pwm.setPWM(1, 0, map(valueString.toInt(),0,180,servo_low,servo_hight));
+              //pwm.setPWM(2, 0, map(valueString.toInt(),0,180,servo_low,servo_hight));
+              //pwm.setPWM(4, 0, map(valueString.toInt(),0,180,servo_low,servo_hight));
+              //pwm.setPWM(5, 0, map(valueString.toInt(),0,180,servo_low,servo_hight));
+              //pwm.setPWM(6, 0, map(valueString.toInt(),0,180,servo_low,servo_hight));
+              //pwm.setPWM(8, 0, map(valueString.toInt(),0,180,servo_low,servo_hight));
+              //pwm.setPWM(9, 0, map(valueString.toInt(),0,180,servo_low,servo_hight));
+              //pwm.setPWM(10, 0, map(valueString.toInt(),0,180,servo_low,servo_hight));
+              //pwm.setPWM(12, 0, map(valueString.toInt(),0,180,servo_low,servo_hight));
+              //pwm.setPWM(13, 0, map(valueString.toInt(),0,180,servo_low,servo_hight));
+              //pwm.setPWM(14, 0, map(valueString.toInt(),0,180,servo_low,servo_hight));
 
-              Serial.println(map(valueString.toInt(),0,180,servo_low,servo_hight));
+              // Serial.println(map(valueString.toInt(),0,180,servo_low,servo_hight));
               // Serial.println(map(180-valueString.toInt(),0,180,servo_low,servo_hight));
             }
             // The HTTP response ends with another blank line
