@@ -43,7 +43,7 @@ namespace robo
             int servo_pin_ = 0;
 
             /// @brief Accelaration [deg/s2]
-            real acceleration_ = 3000.0;
+            real acceleration_ = 1000.0;
 
             /// @brief Current speed [deg/s]
             real speed_ = 0.0;

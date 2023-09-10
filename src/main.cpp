@@ -116,7 +116,7 @@ void loop()
             // Web Page
             client.println("</head><body><h1>ESP32 with Servo</h1>");
             client.println("<p>Position: <span id=\"servoPos\"></span></p>");
-            client.println("<input type=\"range\" min=\"0\" max=\"180\" class=\"slider\" id=\"servoSlider\" onchange=\"servo(this.value)\" value=\"" + valueString + "\"/>");
+            client.println("<input type=\"range\" min=\"-180\" max=\"180\" class=\"slider\" id=\"servoSlider\" onchange=\"servo(this.value)\" value=\"" + valueString + "\"/>");
 
             client.println("<script>var slider = document.getElementById(\"servoSlider\");");
             client.println("var servoP = document.getElementById(\"servoPos\"); servoP.innerHTML = slider.value;");
@@ -137,7 +137,7 @@ void loop()
               leg1.calcServoPos(
                 {
                   {0.0},
-                  {58.e-3},
+                  {130.e-3},
                   {valueString.toInt()*1.e-3}
                 }
               );
