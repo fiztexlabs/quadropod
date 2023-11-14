@@ -10,6 +10,12 @@
 
 namespace robo
 {
+    /**
+     * @brief Robot limb class
+     * @details Provide methods for calculating servo positions
+     * and move servos correspond to defined coordinates of limb end.
+     * @author Ilya Konovalov
+    */
     class Limb
     {
     private:

@@ -9,6 +9,7 @@ namespace robo
     /**
     * @brief Control servo with PCA9685
     * @details Class allows to smooth move of servos
+    * @author Ilya Konovalov
     */
     class Servo
     {
