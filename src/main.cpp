@@ -5,8 +5,79 @@
 #include <Wire.h>
 #include <libmath/matrix.h>
 #include <limb.h>
+#include <quadropod.h>
 
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x40, Wire);
+
+
+robo::Quadropod robot1 = robo::Quadropod(
+  {
+    new robo::Limb(
+      {
+        {37.e-3},
+        {58.e-3},
+        {79.e-3}
+      },
+      {0, 1, 2},
+      &pwm,
+      {
+        {0.0},
+        {270.0},
+        {180.0}
+      },
+      "leg1"
+    ),
+    new robo::Limb(
+      {
+        {37.e-3},
+        {58.e-3},
+        {79.e-3}
+      },
+      {4, 5, 6},
+      &pwm,
+      {
+        {0.0},
+        {270.0},
+        {180.0}
+      },
+      "leg2"
+    ),
+    new robo::Limb(
+      {
+        {37.e-3},
+        {58.e-3},
+        {79.e-3}
+      },
+      {8, 9, 10},
+      &pwm,
+      {
+        {0.0},
+        {270.0},
+        {180.0}
+      },
+      "leg3"
+    ),
+    new robo::Limb(
+      {
+        {37.e-3},
+        {58.e-3},
+        {79.e-3}
+      },
+      {11, 12, 13},
+      &pwm,
+      {
+        {0.0},
+        {270.0},
+        {180.0}
+      },
+      "leg4"
+    )
+  },
+  {
+    {0.0}
+  }
+);
+
 
 robo::Limb leg1 = robo::Limb(
     {
@@ -22,7 +93,10 @@ robo::Limb leg1 = robo::Limb(
       {180.0}
     },
     "leg1"
-    );
+);
+
+
+
 
 // GPIO the servo is attached to
 
@@ -74,7 +148,7 @@ void setup()
 
 void loop()
 {
-  leg1.move();
+  robot1.getLeg(1)->move();
   // Serial.println(servo.current_pos_);
 
   WiFiClient client = server.available(); // Listen for incoming clients
@@ -134,7 +208,7 @@ void loop()
               valueString = header.substring(pos1 + 1, pos2);
 
               // Rotate the servo
-              leg1.calcServoPos(
+              robot1.getLeg(1)->calcServoPos(
                 {
                   {0.0},
                   {130.e-3},
