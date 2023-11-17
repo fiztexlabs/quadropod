@@ -2,6 +2,7 @@
 
 #include <stdexcept>
 #include <string>
+#include <Arduino.h>
 
 namespace robo
 {
@@ -38,6 +39,20 @@ namespace robo
 			: Exception(m)
 		{
 			type_ = "InvalidValue";
+		}
+	};
+
+	/**
+	* @brief Exception invalid dimension
+	*/
+	class ExceptionInvalidDimension :
+		public Exception
+	{
+	public:
+		ExceptionInvalidDimension(const std::string& m)
+			: Exception(m)
+		{
+			type_ = "InvalidDimension";
 		}
 	};
 }

@@ -1,8 +1,9 @@
 #pragma once
-#include <robo_platform.h>
+#include <stepped_robot.h>
 #include <limb.h>
 #include <vector>
 #include <libmath/matrix.h>
+#include <Arduino.h>
 
 namespace robo
 {
@@ -11,29 +12,73 @@ namespace robo
      * @author Ilya Konovalov
     */
     class Quadropod :
-        public RoboPlarform
+        public SteppedRobot
     {
         private:
-            /// @brief Robot limbs
-            std::vector<Limb*> limbs_;
 
-            /// @brief Base coordinates of platform vertices (default)
-            math::Matrix<real> vertices_base_coords_;
+            /// @brief Number of legs
+            size_t legs_num_ = 4;
 
-            /// @brief Current coordinates of platform vertices
-            math::Matrix<real> vertices_curr_coords_;
+            /// @brief Check inputs and raise exceptions
+            void checkInputs(
+                const std::vector<Limb*>& limbs,
+                const math::Matrix<real>& vertices_base_coords,
+                const math::Matrix<real>& platform_base_coords
+            );
         public:
+            /**
+             * @brief Qaudruped robot constructor
+             * @param limbs: Vector of robot limbs, for quadruped robots length must be equal to 4
+             * @param vertices_base_coords: 4x3 Matrix, rows values represents x y ad z coordinates,
+             * cols - robot legs. Coordinates defined relative to robot platfor median center
+             * @param platform_base_coords: Initial coordinates of robot position: 4x6 Matrix,
+             * rows represents coordinates x, y, z and angles p, f, a4 cols - represents legs
+             * @param serial: Pointer to serial port, which robot will be use for output diagnostic 
+             * information
+            */
             Quadropod(
                 const std::vector<Limb*>& limbs,
-                const math::Matrix<real>& vertices_base_coords
-            ) :
-            limbs_(limbs),
-            vertices_base_coords_(vertices_base_coords)
+                const math::Matrix<real>& vertices_base_coords,
+                const String& name = "",
+                const math::Matrix<real>& platform_base_coords = 
+                {
+                    {0.0, 0.0, 0.0, 0.0},
+                    {0.0, 0.0, 0.0, 0.0},
+                    {0.0, 0.0, 0.0, 0.0},
+                    {0.0, 0.0, 0.0, 0.0},
+                    {0.0, 0.0, 0.0, 0.0},
+                    {0.0, 0.0, 0.0, 0.0}
+                },
+                HardwareSerial* serial = nullptr
+            )
             {
+                checkInputs(
+                    limbs,
+                    vertices_base_coords,
+                    platform_base_coords
+                );
+
+                limbs_ = limbs;
+                vertices_base_coords_ = vertices_base_coords;
+                name_ = name;
+                platform_base_coords_ = platform_base_coords;
+                serial_ = serial;
+
+                /// @brief Created robots counter
+                static int cnt_;
+
+                if (name_ == "")
+                {
+                    name_ = "Quadruped_robot_"+String(cnt_);
+                }
+                ++cnt_;
 
             };
 
-            void move(const math::Matrix<real>& coords, const math::Matrix<real>& angles) override;
+            virtual void calcPositions(const math::Matrix<real>& coords, const math::Matrix<real>& angles) override;
+
+            /// @brief Smooth motion
+            virtual void move() override;
             
             /// @brief Get robot limb by idx
             /// @param idx: Index of the robot limb

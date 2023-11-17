@@ -13,9 +13,13 @@ namespace robo
         public:
             virtual ~RoboPlarform() {};
 
-            /// @brief Move robot platform with target coordinates and angles
+            /// @brief Calc robot platform coordinates with target coordinates and angles
             /// @param coords: Movement coordinates, [m]
             /// @param angles: platform angles, [deg]
-            virtual void move(const math::Matrix<real>& coords, const math::Matrix<real>& angles) = 0;
+            virtual void calcPositions(const math::Matrix<real>& mov, const math::Matrix<real>& angles) = 0;
+
+            /// @brief Move platform
+            /// @details Used to smooth movement
+            virtual void move() = 0;
     };
 }
