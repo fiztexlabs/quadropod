@@ -2,6 +2,11 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include <vector>
+#include <string>
+#include <SimpleFTPServer.h>
+#include <WebServer.h>
+#include <WiFi.h>
+#include <SPIFFS.h>
 
 namespace robo
 {
@@ -14,11 +19,11 @@ namespace robo
             /// @brief WiFi SSID
             String password_;
 
-            /// @brief Variable to store the HTTP request
-            String header_;
-
             /// @brief WiFi server object
-            WiFiServer* server_ = nullptr;
+            WebServer* server_ = nullptr;
+
+            /// @brief FTP server
+            FtpServer ftpSrv_;
 
             /// @brief Serial object (used for write debug info to the serial port)
             HardwareSerial* serial_ = nullptr;
@@ -31,15 +36,23 @@ namespace robo
 
             /// @brief Number of controllers (feilds for input values)
             int controllers_ = 0;
-
-            int pos1_ = 0;
-
-            int pos2_ = 0;
             
             /// @brief Indicate, that WiFi interface is running
             bool run_ = false;
 
-            void updatePage(WiFiClient& client);
+            /// @brief Show web page
+            /// @param path Path to the html web page in the local FS
+            /// @return 
+            bool handleFileRead(String path);
+
+            /// @brief Set server behavior, if index.html doesn't exist
+            void handleNotFound();
+
+            /**
+             * @brief Function setup web server behavior
+             * @details Set server behavior on different requests 
+             */
+            void setupServer();
         public:
             /**
             * @brief WiFi web interface for limbs control
@@ -58,7 +71,7 @@ namespace robo
             ssid_(ssid),
             password_(password),
             controllers_(controllers),
-            server_(new WiFiServer(port)),
+            server_(new WebServer(port)),
             serial_(serial)
             {
                 stringVariables_ = std::vector<String>(controllers_, String(0));
@@ -74,9 +87,8 @@ namespace robo
             /// @return true if success
             bool begin();
 
-            /// @brief Listen for incoming clients
-            /// @return true if success
-            bool listen();
+            /// @brief Handle web and ftp servers
+            void handle();
 
             /// @brief Get values, read from web
             /// @param[out] values: Values, get from web interface 
