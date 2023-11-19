@@ -1,4 +1,5 @@
 #include <Arduino.h>
+<<<<<<< HEAD
 #include <WiFi.h>
 #include <servo.h>
 #include <Adafruit_PWMServoDriver.h>
@@ -6,9 +7,18 @@
 #include <libmath/matrix.h>
 #include <limb.h>
 #include <quadropod.h>
+=======
+#include <web_interface.h>
+#include <vector>
+#include <defines.h>
+>>>>>>> debug_web_interface
 
-Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x40, Wire);
+robo::WebInterface ui = robo::WebInterface(
+    "SheldonWiFi_2.4GHz",
+    "Supernova2021"
+  );
 
+<<<<<<< HEAD
 
 robo::Quadropod robot1 = robo::Quadropod(
   {
@@ -114,45 +124,28 @@ String header;
 String valueString = String(5);
 int pos1 = 0;
 int pos2 = 0;
+=======
+std::vector<robo::real> angles;
+>>>>>>> debug_web_interface
 
 void setup()
 {
-
   Serial.begin(115200);
-
-  Wire.begin(4, 5);
-
-  pwm.begin();
-
-  leg1.begin();
-
-  // pwm.begin();
-  // pwm.setPWMFreq(50);
-
-  // Connect to Wi-Fi network with SSID and password
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
-  WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED)
-  {
-    delay(500);
-    Serial.print(".");
-  }
-  // Print local IP address and start web server
-  Serial.println("");
-  Serial.println("WiFi connected.");
-  Serial.println("IP address: ");
-  Serial.println(WiFi.localIP());
-  server.begin();
+  ui.begin();
 }
 
 void loop()
 {
+<<<<<<< HEAD
   robot1.getLeg(1)->move();
   // Serial.println(servo.current_pos_);
+=======
+  ui.handle();
+>>>>>>> debug_web_interface
 
-  WiFiClient client = server.available(); // Listen for incoming clients
+  ui.getPlatformAngles(angles);
 
+<<<<<<< HEAD
   if (client)
   {                                // If a new client connects,
     Serial.println("New Client."); // print a message out in the serial port
@@ -240,4 +233,10 @@ void loop()
     Serial.println("Client disconnected.");
     Serial.println("");
   }
+=======
+  Serial.println(" ");
+  Serial.println("OX = "+String(angles.at(0))+" deg");
+  Serial.println("OY = "+String(angles.at(1))+" deg");
+  Serial.println("OZ = "+String(angles.at(2))+" deg");
+>>>>>>> debug_web_interface
 }

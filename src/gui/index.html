@@ -1,0 +1,153 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
+
+    <title>Quadropod DEBUG</title>
+	
+	<style>
+		button {
+			display:block;
+		}
+		submitbutton {
+			display:block;
+		}
+		span {
+			display:block;
+		}
+	</style>
+	
+  </head>
+  <body>
+	<!-- <span class="badge badge-default" id="Status">LED status: full auto</span> 
+	<button type="button" class="btn btn-success" id="LedOnButton">
+		LED On
+	</button> 
+	<button type="button" class="btn btn-danger" id="LedOffButton">
+		LED Off
+	</button> 
+	<button type="button" class="btn btn-outline-success" id="SetFullAutoButton">
+		Set full automatic mode
+	</button> -->
+	<span id="a_ox">Angle OX: 0 deg</span> 
+	<form action="" method="post">
+		<label for="angle_ox_value">Angle OX:</label>
+		<input type="text" name="name" size="10" id="angle_ox_value"> 
+		<button type="submitbutton" class="btn btn-outline-success" id="SetAngleOX">
+			Set OX angle
+		</button>
+	</form>
+	<br>
+	<span id="a_oy">Angle OY: 0 deg</span> 
+	<form action="" method="post">
+		<label for="angle_oy_value">Angle OY:</label>
+		<input type="text" name="name" size="10" id="angle_oy_value"> 
+		<button type="submitbutton" class="btn btn-outline-success" id="SetAngleOY">
+			Set OY angle
+		</button>
+	</form>
+	<br>
+	<span id="a_oz">Angle OZ: 0 deg</span> 
+	<form action="" method="post">
+		<label for="angle_oz_value">Angle OZ:</label>
+		<input type="text" name="name" size="10" id="angle_oz_value"> 
+		<button type="submitbutton" class="btn btn-outline-success" id="SetAngleOZ">
+			Set OZ angle
+		</button>
+	</form>
+	<!-- <div>
+		<input type="color" id="Color" name="Color"
+			value="#808080">
+		<button for="Color" class="btn btn-outline-success" id="SetColor">
+			Set color
+		</button>
+	</div> 
+	<span id="CurrDaylight">Current daylight: </span> 
+	<span id="Daylight">LED threshold daylight: 50</span> 
+	<form action="" method="post">
+		<label for="LightValue">Threshold daylight:</label>
+		<input type="text" name="name" size="10" id="LightValue"> 
+		<button type="submitbutton" class="btn btn-outline-success" id="SetDaylight">
+			Set daylight
+		</button>
+	</form> -->
+</div>
+	<script>
+		// OX angle
+		var a_ox = document.getElementById("angle_ox_value");
+		var set_a_ox_button = document.getElementById("SetAngleOX");
+		function set_a_ox()
+		{
+			var request = new XMLHttpRequest();
+			request.open('POST',"/set_a_ox?a_ox="+a_ox.value,false);
+			request.send();
+			get_a_ox();
+		}
+		function get_a_ox()
+		{
+			var request = new XMLHttpRequest();
+			request.open('GET','/get_a_ox',true);
+			request.send();
+			request.onload = function() {
+				if (request.readyState == 4 && request.status == 200) {
+					var response = request.responseText;
+					document.getElementById("a_ox").textContent="Angle OX: "+response+" deg";
+				}
+			}
+		}
+		document.addEventListener('DOMContentLoaded', get_a_ox);
+		set_a_ox_button.addEventListener('click', set_a_ox);
+		
+		// OY angle
+		var a_oy = document.getElementById("angle_oy_value");
+		var set_a_oy_button = document.getElementById("SetAngleOY");
+		function set_a_oy()
+		{
+			var request = new XMLHttpRequest();
+			request.open('POST',"/set_a_oy?a_oy="+a_oy.value,false);
+			request.send();
+			get_a_oy();
+		}
+		function get_a_oy()
+		{
+			var request = new XMLHttpRequest();
+			request.open('GET','/get_a_oy',true);
+			request.send();
+			request.onload = function() {
+				if (request.readyState == 4 && request.status == 200) {
+					var response = request.responseText;
+					document.getElementById("a_oy").textContent="Angle OY: "+response+" deg";
+				}
+			}
+		}
+		document.addEventListener('DOMContentLoaded', get_a_oy);
+		set_a_oy_button.addEventListener('click', set_a_oy);
+		
+		// OZ angle
+		var a_oz = document.getElementById("angle_oz_value");
+		var set_a_oz_button = document.getElementById("SetAngleOZ");
+		function set_a_oz()
+		{
+			var request = new XMLHttpRequest();
+			request.open('POST',"/set_a_oz?a_oz="+a_oz.value,false);
+			request.send();
+			get_a_oz();
+		}
+		function get_a_oz()
+		{
+			var request = new XMLHttpRequest();
+			request.open('GET','/get_a_oz',true);
+			request.send();
+			request.onload = function() {
+				if (request.readyState == 4 && request.status == 200) {
+					var response = request.responseText;
+					document.getElementById("a_oz").textContent="Angle OZ: "+response+" deg";
+				}
+			}
+		}
+		document.addEventListener('DOMContentLoaded', get_a_oz);
+		set_a_oz_button.addEventListener('click', set_a_oz);
+	</script>
+  </body>
+</html>
