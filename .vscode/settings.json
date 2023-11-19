@@ -1,5 +1,4 @@
 {
-<<<<<<< HEAD
     "cmake.configureOnOpen": false,
     "files.associations": {
         "algorithm": "cpp",
@@ -12,17 +11,6 @@
         "cmath": "cpp",
         "compare": "cpp",
         "concepts": "cpp",
-=======
-    "files.associations": {
-        "array": "cpp",
-        "atomic": "cpp",
-        "*.tcc": "cpp",
-        "cctype": "cpp",
-        "chrono": "cpp",
-        "clocale": "cpp",
-        "cmath": "cpp",
-        "cstdarg": "cpp",
->>>>>>> debug_web_interface
         "cstddef": "cpp",
         "cstdint": "cpp",
         "cstdio": "cpp",
@@ -30,7 +18,6 @@
         "cstring": "cpp",
         "ctime": "cpp",
         "cwchar": "cpp",
-<<<<<<< HEAD
         "exception": "cpp",
         "format": "cpp",
         "forward_list": "cpp",
@@ -77,43 +64,5 @@
         "xtr1common": "cpp",
         "xtree": "cpp",
         "xutility": "cpp"
-=======
-        "cwctype": "cpp",
-        "deque": "cpp",
-        "unordered_map": "cpp",
-        "unordered_set": "cpp",
-        "vector": "cpp",
-        "exception": "cpp",
-        "algorithm": "cpp",
-        "functional": "cpp",
-        "iterator": "cpp",
-        "map": "cpp",
-        "memory": "cpp",
-        "memory_resource": "cpp",
-        "numeric": "cpp",
-        "optional": "cpp",
-        "random": "cpp",
-        "ratio": "cpp",
-        "string": "cpp",
-        "string_view": "cpp",
-        "system_error": "cpp",
-        "tuple": "cpp",
-        "type_traits": "cpp",
-        "utility": "cpp",
-        "fstream": "cpp",
-        "initializer_list": "cpp",
-        "iomanip": "cpp",
-        "iosfwd": "cpp",
-        "iostream": "cpp",
-        "istream": "cpp",
-        "limits": "cpp",
-        "new": "cpp",
-        "ostream": "cpp",
-        "sstream": "cpp",
-        "stdexcept": "cpp",
-        "streambuf": "cpp",
-        "cinttypes": "cpp",
-        "typeinfo": "cpp"
->>>>>>> debug_web_interface
     }
 }

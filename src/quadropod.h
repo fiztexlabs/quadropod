@@ -49,7 +49,7 @@ namespace robo
                     {0.0, 0.0, 0.0, 0.0},
                     {0.0, 0.0, 0.0, 0.0}
                 },
-                HardwareSerial* serial = nullptr
+                HardwareSerial* serial = &Serial
             )
             {
                 checkInputs(

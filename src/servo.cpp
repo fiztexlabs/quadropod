@@ -13,6 +13,8 @@ int sign(T val)
 
 void robo::Servo::begin()
 {
+    pwm_->begin();
+    
     pwm_->setPWMFreq(pwm_freq_);
 }
 

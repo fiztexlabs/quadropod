@@ -21,5 +21,7 @@ namespace robo
 
         public:
             virtual ~SteppedRobot() {};
+
+            virtual bool begin();
     };
 }
