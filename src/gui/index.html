@@ -4,7 +4,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
 
-    <title>Stairway module</title>
+    <title>Quadropod DEBUG</title>
 	
 	<style>
 		button {
@@ -20,7 +20,7 @@
 	
   </head>
   <body>
-	<span class="badge badge-default" id="Status">LED status: full auto</span> 
+	<!-- <span class="badge badge-default" id="Status">LED status: full auto</span> 
 	<button type="button" class="btn btn-success" id="LedOnButton">
 		LED On
 	</button> 
@@ -29,16 +29,34 @@
 	</button> 
 	<button type="button" class="btn btn-outline-success" id="SetFullAutoButton">
 		Set full automatic mode
-	</button>
-	<span id="Power">LED power: 100%</span> 
+	</button> -->
+	<span id="a_ox">Angle OX: 0 deg</span> 
 	<form action="" method="post">
-		<label for="PowerValue">Power:</label>
-		<input type="text" name="name" size="10" id="PowerValue"> 
-		<button type="submitbutton" class="btn btn-outline-success" id="SetPower">
-			Set power
+		<label for="angle_ox_value">Angle OX:</label>
+		<input type="text" name="name" size="10" id="angle_ox_value"> 
+		<button type="submitbutton" class="btn btn-outline-success" id="SetAngleOX">
+			Set OX angle
 		</button>
 	</form>
-	<div>
+	<br>
+	<span id="a_oy">Angle OY: 0 deg</span> 
+	<form action="" method="post">
+		<label for="angle_oy_value">Angle OY:</label>
+		<input type="text" name="name" size="10" id="angle_oy_value"> 
+		<button type="submitbutton" class="btn btn-outline-success" id="SetAngleOY">
+			Set OY angle
+		</button>
+	</form>
+	<br>
+	<span id="a_oz">Angle OZ: 0 deg</span> 
+	<form action="" method="post">
+		<label for="angle_oz_value">Angle OZ:</label>
+		<input type="text" name="name" size="10" id="angle_oz_value"> 
+		<button type="submitbutton" class="btn btn-outline-success" id="SetAngleOZ">
+			Set OZ angle
+		</button>
+	</form>
+	<!-- <div>
 		<input type="color" id="Color" name="Color"
 			value="#808080">
 		<button for="Color" class="btn btn-outline-success" id="SetColor">
@@ -53,179 +71,83 @@
 		<button type="submitbutton" class="btn btn-outline-success" id="SetDaylight">
 			Set daylight
 		</button>
-	</form>
+	</form> -->
 </div>
 	<script>
-		var led_on = document.getElementById("LedOnButton");
-		var led_off = document.getElementById("LedOffButton");
-		var led_auto = document.getElementById("SetFullAutoButton");
-		var maxpower = document.getElementById("PowerValue");
-		var setpower = document.getElementById("SetPower");
-		var daylight = document.getElementById("LightValue");
-		var setdaylight = document.getElementById("SetDaylight");
-		var setcolor = document.getElementById("SetColor");
-		var color = document.getElementById("Color");
-		function led_state()
+		// OX angle
+		var a_ox = document.getElementById("angle_ox_value");
+		var set_a_ox_button = document.getElementById("SetAngleOX");
+		function set_a_ox()
 		{
 			var request = new XMLHttpRequest();
-			request.open('GET','/led_status',true);
+			request.open('POST',"/set_a_ox?a_ox="+a_ox.value,false);
+			request.send();
+			get_a_ox();
+		}
+		function get_a_ox()
+		{
+			var request = new XMLHttpRequest();
+			request.open('GET','/get_a_ox',true);
 			request.send();
 			request.onload = function() {
 				if (request.readyState == 4 && request.status == 200) {
 					var response = request.responseText;
-					led_status = Number.parseInt(response);
-					if (led_status == 254)
-						document.getElementById("Status").textContent="LED status: user mode, led Off";
-					if (led_status == 255)
-						document.getElementById("Status").textContent="LED status: user mode, led On";
-					if (led_status == 0)
-						document.getElementById("Status").textContent="LED status: full auto";
-					if (led_status == 2)
-						document.getElementById("Status").textContent="LED status: user color auto";
+					document.getElementById("a_ox").textContent="Angle OX: "+response+" deg";
 				}
 			}
 		}
-		function led_power()
-		{
-			var request = new XMLHttpRequest();
-			request.open('GET','/led_power',true);
-			request.send();
-			request.onload = function() {
-				if (request.readyState == 4 && request.status == 200) {
-					var response = request.responseText;
-					document.getElementById("Power").textContent="LED power: "+response+"%";
-				}
-			}
-		}
-		function led_daylight_threshold()
-		{
-			var request = new XMLHttpRequest();
-			request.open('GET','/led_daylight',true);
-			request.send();
-			request.onload = function() {
-				if (request.readyState == 4 && request.status == 200) {
-					var response = request.responseText;
-					document.getElementById("Daylight").textContent="LED threshold daylight: "+response;
-				}
-			}
-		}
-		function led_curr_daylight()
-		{
-			var request = new XMLHttpRequest();
-			request.open('GET','/get_light_level',true);
-			request.send();
-			request.onload = function() {
-				if (request.readyState == 4 && request.status == 200) {
-					var response = request.responseText;
-					document.getElementById("CurrDaylight").textContent="Current daylight: "+response;
-				}
-			}
-		}
-		function led_color()
-		{
-			var request = new XMLHttpRequest();
-			request.open('GET','/led_color',true);
-			request.send();
-			request.onload = function() {
-				if (request.readyState == 4 && request.status == 200) {
-					var response = request.responseText;
-					color.value=response;
-				}
-			}
-		}
-		function led_On()
-		{
-			var request = new XMLHttpRequest();
-			request.open('GET','/led_on',false);
-			request.send();
-			led_state();
-			led_color();
-		}
-		function led_Off()
-		{
-			var request = new XMLHttpRequest();
-			request.open('GET','/led_off',false);
-			request.send();
-			led_state();
-		}
-		function led_Auto()
-		{
-			var request = new XMLHttpRequest();
-			request.open('GET','/led_auto',false);
-			request.send();
-			led_state();
-			led_color();
-		}
-		function set_power()
-		{
-			var request = new XMLHttpRequest();
-			request.open('POST',"/set_power?MaxPower="+maxpower.value,false);
-			request.send();
-			led_power();
-		}
-		function set_daylight()
-		{
-			var request = new XMLHttpRequest();
-			request.open('POST',"/set_light_level?LightLevel="+daylight.value,false);
-			request.send();
-			led_daylight_threshold();
-		}
-		function set_rgb()
-		{
-			var R = parse_hex(1, color.value);
-			var G = parse_hex(2, color.value);
-			var B = parse_hex(3, color.value);
-			
-			var request = new XMLHttpRequest();
-			var msg = "/set_color?R="+String(R)+"&G="+String(G)+"&B="+String(B);
-			console.log(msg);
-			request.open('POST',msg,false);
-			request.send();
-			led_state();
-		}
-		function parse_hex(id, hex) 
-		{
-			if (!/^#?([a-f\d]{3,4}|[a-f\d]{6}|[a-f\d]{8})$/i.test(hex)) return null;
-			hex = hex.replace(/#/, "");
-			
-			/***/
-			if (hex.length < 6) { // abc → aabbcc
-				hex = hex.replace(/(.)/g, "$1$1");
-			}
-			var dec = hex.match(/../g).map(function(val) { return parseInt(val, 16) });
-			
-			/***/
-			var type = "rgb";
-			if (dec.length > 3) {
-				type = "rgba";
-				dec[3] = Math.round(100 * 255 / dec[3]) / 100;
-			}
-			if(id == 0)
-				return type;
-			if(id == 1)
-				return dec[0];
-			if(id == 2)
-				return dec[1];
-			if(id == 3)
-				return dec[2];
-		}
-		setInterval(function()
-		{
-			led_state();
-			led_curr_daylight();
-		}, 5000);
+		document.addEventListener('DOMContentLoaded', get_a_ox);
+		set_a_ox_button.addEventListener('click', set_a_ox);
 		
-		document.addEventListener('DOMContentLoaded', led_state);
-		document.addEventListener('DOMContentLoaded', led_power);
-		document.addEventListener('DOMContentLoaded', led_daylight_threshold);
-		document.addEventListener('DOMContentLoaded', led_curr_daylight);
-		document.addEventListener('DOMContentLoaded', led_color);
-		led_on.addEventListener('click', led_On);
-		led_off.addEventListener('click', led_Off);
-		led_auto.addEventListener('click', led_Auto);
-		setdaylight.addEventListener('click', set_daylight);
-		setpower.addEventListener('click', set_power);
-		setcolor.addEventListener('click', set_rgb);
+		// OY angle
+		var a_oy = document.getElementById("angle_oy_value");
+		var set_a_oy_button = document.getElementById("SetAngleOY");
+		function set_a_oy()
+		{
+			var request = new XMLHttpRequest();
+			request.open('POST',"/set_a_oy?a_oy="+a_oy.value,false);
+			request.send();
+			get_a_oy();
+		}
+		function get_a_oy()
+		{
+			var request = new XMLHttpRequest();
+			request.open('GET','/get_a_oy',true);
+			request.send();
+			request.onload = function() {
+				if (request.readyState == 4 && request.status == 200) {
+					var response = request.responseText;
+					document.getElementById("a_oy").textContent="Angle OY: "+response+" deg";
+				}
+			}
+		}
+		document.addEventListener('DOMContentLoaded', get_a_oy);
+		set_a_oy_button.addEventListener('click', set_a_oy);
+		
+		// OZ angle
+		var a_oz = document.getElementById("angle_oz_value");
+		var set_a_oz_button = document.getElementById("SetAngleOZ");
+		function set_a_oz()
+		{
+			var request = new XMLHttpRequest();
+			request.open('POST',"/set_a_oz?a_oz="+a_oz.value,false);
+			request.send();
+			get_a_oz();
+		}
+		function get_a_oz()
+		{
+			var request = new XMLHttpRequest();
+			request.open('GET','/get_a_oz',true);
+			request.send();
+			request.onload = function() {
+				if (request.readyState == 4 && request.status == 200) {
+					var response = request.responseText;
+					document.getElementById("a_oz").textContent="Angle OZ: "+response+" deg";
+				}
+			}
+		}
+		document.addEventListener('DOMContentLoaded', get_a_oz);
+		set_a_oz_button.addEventListener('click', set_a_oz);
 	</script>
   </body>
 </html>

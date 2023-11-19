@@ -35,11 +35,78 @@ void robo::WebInterface::handleNotFound()
   server_->send(404, "text/plain", message);
 }
 
+String robo::WebInterface::setAngle(const String &angle)
+{
+    real val = -999.0;
+
+    if(angle == "OX")
+    {
+        angles_.at(0) = static_cast<real>(server_->arg("a_ox").toDouble());
+        val = angles_.at(0);
+    }
+    if(angle == "OY")
+    {
+        angles_.at(1) = static_cast<real>(server_->arg("a_oy").toDouble());
+        val = angles_.at(1);
+    }
+    if(angle == "OZ")
+    {
+        angles_.at(2) = static_cast<real>(server_->arg("a_oz").toDouble());
+        val = angles_.at(2);
+    }
+
+    return String(angle+" angle set to "+String(val)+" deg");
+}
+
+String robo::WebInterface::getAngle(const String &angle)
+{
+    real val = -999.0;
+
+    if(angle == "OX")
+    {
+        val = angles_.at(0);
+    }
+    if(angle == "OY")
+    {
+        val = angles_.at(1);
+    }
+    if(angle == "OZ")
+    {
+        val = angles_.at(2);
+    }
+
+    return String(String(val));
+}
+
 void robo::WebInterface::setupServer()
 {
   server_->onNotFound([this]() {
     if (!handleFileRead(server_->uri()))
       handleNotFound();
+  });
+
+  server_->on("/set_a_ox", [this]() {
+    server_->send(200, "text/plain", setAngle("OX"));
+  });
+
+  server_->on("/get_a_ox", [this]() {
+    server_->send(200, "text/plain", getAngle("OX"));
+  });
+
+  server_->on("/set_a_oy", [this]() {
+    server_->send(200, "text/plain", setAngle("OY"));
+  });
+
+  server_->on("/get_a_oy", [this]() {
+    server_->send(200, "text/plain", getAngle("OY"));
+  });
+
+  server_->on("/set_a_oz", [this]() {
+    server_->send(200, "text/plain", setAngle("OZ"));
+  });
+
+  server_->on("/get_a_oz", [this]() {
+    server_->send(200, "text/plain", getAngle("OZ"));
   });
 }
 
@@ -126,12 +193,7 @@ void robo::WebInterface::handle()
     ftpSrv_.handleFTP();
 }
 
-void robo::WebInterface::getValues(std::vector<int> &values)
+void robo::WebInterface::getPlatformAngles(std::vector<real> &values)
 {
-    values = intVariables_;
-}
-
-void robo::WebInterface::setControllersNum(const int n)
-{
-    controllers_ = n;
+    values = angles_;
 }

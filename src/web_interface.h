@@ -7,6 +7,7 @@
 #include <WebServer.h>
 #include <WiFi.h>
 #include <SPIFFS.h>
+#include <defines.h>
 
 namespace robo
 {
@@ -28,11 +29,8 @@ namespace robo
             /// @brief Serial object (used for write debug info to the serial port)
             HardwareSerial* serial_ = nullptr;
 
-            /// @brief Vector of string variables, read from controllers
-            std::vector<String> stringVariables_;
-
-            /// @brief Vector of integer variables, read from controllers
-            std::vector<int> intVariables_;
+            /// @brief Platform angles
+            std::vector<real> angles_;
 
             /// @brief Number of controllers (feilds for input values)
             int controllers_ = 0;
@@ -47,6 +45,18 @@ namespace robo
 
             /// @brief Set server behavior, if index.html doesn't exist
             void handleNotFound();
+
+            /// @brief Set platform angle from web
+            /// @details Get value from web interface and put it into angles_
+            /// @param angle String angle identifer ("OX", "OY" or "OZ")
+            /// @return Text message
+            String setAngle(const String& angle);
+
+            /// @brief Send platform angle to the web
+            /// @details Get value from angles_ and send it to the web
+            /// @param angle String angle identifer ("OX", "OY" or "OZ")
+            /// @return String angle value
+            String getAngle(const String& angle);
 
             /**
              * @brief Function setup web server behavior
@@ -64,9 +74,9 @@ namespace robo
             WebInterface(
                 const String& ssid,
                 const String& password,
-                int controllers = 1,
+                int controllers = 3,
                 int port = 80,
-                HardwareSerial* serial = nullptr
+                HardwareSerial* serial = &Serial
             ) :
             ssid_(ssid),
             password_(password),
@@ -74,8 +84,8 @@ namespace robo
             server_(new WebServer(port)),
             serial_(serial)
             {
-                stringVariables_ = std::vector<String>(controllers_, String(0));
-                intVariables_ = std::vector<int>(controllers_, 0);
+                // stringVariables_ = std::vector<String>(controllers_, String(0));
+                angles_ = std::vector<real>(controllers_, 0.0);
             };
 
             ~WebInterface()
@@ -90,12 +100,8 @@ namespace robo
             /// @brief Handle web and ftp servers
             void handle();
 
-            /// @brief Get values, read from web
+            /// @brief Get platform angles, read from web
             /// @param[out] values: Values, get from web interface 
-            void getValues(std::vector<int>& values);
-
-            /// @brief Set number of controllers
-            /// @param n: Controllers number
-            void setControllersNum(const int n);
+            void getPlatformAngles(std::vector<real>& values);
     };
 }
