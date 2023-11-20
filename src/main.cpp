@@ -24,7 +24,7 @@ robo::Quadropod robot1 = robo::Quadropod(
         {58.e-3},
         {79.e-3}
       },
-      {0, 1, 2},
+      {2, 1, 0},
       &pwm,
       {
         {0.0},
@@ -39,7 +39,7 @@ robo::Quadropod robot1 = robo::Quadropod(
         {58.e-3},
         {79.e-3}
       },
-      {4, 5, 6},
+      {6, 5, 4},
       &pwm,
       {
         {0.0},
@@ -54,7 +54,7 @@ robo::Quadropod robot1 = robo::Quadropod(
         {58.e-3},
         {79.e-3}
       },
-      {8, 9, 10},
+      {10, 9, 8},
       &pwm,
       {
         {0.0},
@@ -69,10 +69,10 @@ robo::Quadropod robot1 = robo::Quadropod(
         {58.e-3},
         {79.e-3}
       },
-      {11, 12, 13},
+      {14, 13, 12},
       &pwm,
       {
-        {0.0},
+        {1.0},
         {270.0},
         {180.0}
       },
@@ -92,7 +92,7 @@ robo::Quadropod robot1 = robo::Quadropod(
 //       {58.e-3},
 //       {79.e-3}
 //     },
-//     {6, 5, 4},
+//     {10, 9, 8},
 //     &pwm,
 //     {
 //       {0.0},
@@ -107,9 +107,21 @@ std::vector<robo::real> angles;
 void setup()
 {
   Serial.begin(115200);
-  Wire.begin(4, 5);
-  robot1.begin();
   ui.begin();
+
+  Wire.begin(5, 4);
+  robot1.begin();
+
+  // pwm.begin();
+  // leg1.begin();
+
+  // leg1.calcServoPos(
+  //   {
+  //     {0.174},
+  //     {0.0},
+  //     {0.0}
+  //   }
+  // );
 }
 
 void loop()
@@ -118,8 +130,17 @@ void loop()
 
   ui.getPlatformAngles(angles);
 
-  Serial.println(" ");
+  robot1.getLeg(1)->move();
+  robot1.getLeg(1)->calcServoPos(
+    {
+      {angles.at(0)},
+      {angles.at(1)},
+      {angles.at(2)}
+    }
+  );
+
+  // Serial.println(" ");
   Serial.println("OX = "+String(angles.at(0))+" deg");
-  Serial.println("OY = "+String(angles.at(1))+" deg");
-  Serial.println("OZ = "+String(angles.at(2))+" deg");
+  // Serial.println("OY = "+String(angles.at(1))+" deg");
+  // Serial.println("OZ = "+String(angles.at(2))+" deg");
 }

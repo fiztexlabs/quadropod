@@ -1,6 +1,6 @@
 #pragma once
 
-#define ROBO_DOUBLE_PREC
+// #define ROBO_DOUBLE_PREC
 
 namespace robo
 {
