@@ -114,6 +114,11 @@ namespace robo
         /// @brief Set target coordinates of the limb end (foot) and compute
         /// target servos angles
         void calcServoPos(const math::Matrix<real> &coords);
+            
+        /// @brief Get limb servo by idx
+        /// @param idx: Index of the limb servo
+        /// @return Pointer to the servo object
+        Servo* getServo(const size_t idx);
 
         /**
          * @brief Move limb servos to target positions at each controller's loop iteration

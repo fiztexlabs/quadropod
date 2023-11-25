@@ -83,6 +83,6 @@ namespace robo
             /// @brief Get robot limb by idx
             /// @param idx: Index of the robot limb
             /// @return Pointer to the limb object
-            Limb* getLeg(size_t idx);
+            Limb* getLeg(const size_t idx);
     };
 }

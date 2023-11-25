@@ -1,6 +1,7 @@
 #include <servo.h>
 #include <Arduino.h>
 #include <libmath/boolean.h>
+#include <cmath>
 
 using namespace robo;
 
@@ -20,7 +21,7 @@ void robo::Servo::begin()
 
 void robo::Servo::setTargetPosition(const real target_pos)
 {
-    target_pos_ = target_pos;
+    target_pos_ = std::min(std::max(static_cast<real>(0.0), target_pos), max_angle_);
 }
 
 bool robo::Servo::move()
