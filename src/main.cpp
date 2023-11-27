@@ -176,30 +176,30 @@ void loop()
   
   robot1.getLeg(0)->calcServoPos(
     {
-      {81.3e-3},
-      {81.3e-3},
-      {-40.0e-3}
+      {angles.at(0)},
+      {angles.at(1)},
+      {angles.at(2)}
     }
   );
   robot1.getLeg(1)->calcServoPos(
     {
-      {81.3e-3},
-      {81.3e-3},
-      {-40.0e-3}
+      {angles.at(0)},
+      {angles.at(1)},
+      {angles.at(2)}
     }
   );
   robot1.getLeg(2)->calcServoPos(
     {
-      {81.3e-3},
-      {81.3e-3},
-      {-40.0e-3}
+      {angles.at(0)},
+      {angles.at(1)},
+      {angles.at(2)}
     }
   );
   robot1.getLeg(3)->calcServoPos(
     {
-      {81.3e-3},
-      {81.3e-3},
-      {-40.0e-3}
+      {angles.at(0)},
+      {angles.at(1)},
+      {angles.at(2)}
     }
   );
 

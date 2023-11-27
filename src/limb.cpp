@@ -84,5 +84,10 @@ bool robo::Limb::move()
         success = std::min(success, servo.move());
     }
 
+    // for (auto servo = servo_.rbegin(); servo != servo_.rend(); ++servo)
+    // {
+    //     success = std::min(success, (*servo).move());
+    // }
+
     return success;
 }
