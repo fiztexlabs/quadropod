@@ -34,8 +34,8 @@ robo::Quadropod robot1 = robo::Quadropod(
       },
       "leg0",
       {
-        {0.07},
-        {0.07},
+        {0.003},
+        {0.08},
         {-0.07}
       }
     ),
@@ -54,8 +54,8 @@ robo::Quadropod robot1 = robo::Quadropod(
       },
       "leg1",
       {
-        {0.07},
-        {0.07},
+        {0.03},
+        {0.08},
         {-0.07}
       }
     ),
@@ -74,8 +74,8 @@ robo::Quadropod robot1 = robo::Quadropod(
       },
       "leg2",
       {
-        {0.07},
-        {0.07},
+        {0.03},
+        {0.08},
         {-0.07}
       }
     ),
@@ -88,14 +88,14 @@ robo::Quadropod robot1 = robo::Quadropod(
       {12, 13, 14},
       &pwm,
       {
-        {0.0},
+        {0.03},
         {90.0},
         {0.0}
       },
       "leg3",
       {
-        {0.07},
-        {0.07},
+        {0.0},
+        {0.08},
         {-0.07}
       }
     )
@@ -154,13 +154,13 @@ void loop()
   
   ui.handle();
 
-  // ui.getPlatformAngles(angles);
-  angles = 
-  {
-    {0.0},
-    {0.0},
-    {40.0}
-  };
+  ui.getPlatformAngles(angles);
+  // angles = 
+  // {
+  //   {0.0},
+  //   {0.0},
+  //   {40.0}
+  // };
 
   robot1.calcPositions(
     {

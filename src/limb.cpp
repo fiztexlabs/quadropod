@@ -17,6 +17,10 @@ void Limb::calcServoPos()
 
     servo_target_pos_(0, 0) =
         std::acos(std::max(static_cast<real>(-1.0), std::min(static_cast<real>(1.0), target_coords_(0, 0) / std::sqrt(std::pow(target_coords_(0, 0), static_cast<real>(2.0)) + std::pow(target_coords_(1, 0), static_cast<real>(2.0)))))) * (180.0/M_PI);
+    if (target_coords_(1, 0) < 0.0)
+    {
+        servo_target_pos_(0, 0) = -servo_target_pos_(0, 0);
+    }
 
     real L03 = std::sqrt(
         std::pow(target_coords_2d_(0, 0), static_cast<real>(2.0)) + std::pow(target_coords_2d_(1, 0), static_cast<real>(2.0))

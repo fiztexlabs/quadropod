@@ -52,7 +52,7 @@ void robo::Quadropod::calcPositions(const math::Matrix<real> &movement, const ma
         platform_angles_ = angles;
 
         // convert angles to radians
-        angles_r = (PI / 180.0) * diff_a;
+        angles_r = (M_PI / 180.0) * diff_a;
     }
 
     // compute movement matrices
