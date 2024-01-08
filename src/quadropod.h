@@ -60,6 +60,7 @@ namespace robo
 
                 limbs_ = limbs;
                 vertices_base_coords_ = vertices_base_coords;
+                vertices_curr_coords_ = vertices_base_coords_;
                 name_ = name;
                 platform_base_coords_ = platform_base_coords;
                 serial_ = serial;
@@ -77,7 +78,7 @@ namespace robo
 
             };
 
-            virtual void calcPositions(const math::Matrix<real>& coords, const math::Matrix<real>& angles) override;
+            virtual void calcPositions(const math::Matrix<real>& movement, const math::Matrix<real>& angles) override;
 
             /// @brief Smooth motion
             virtual void move() override;

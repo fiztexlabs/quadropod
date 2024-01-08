@@ -8,7 +8,7 @@
 #include <web_interface.h>
 #include <vector>
 #include <defines.h>
-#include <ArduinoOTA.h>
+// #include <ArduinoOTA.h>
 
 robo::WebInterface ui = robo::WebInterface(
     "SheldonWiFi_2.4GHz",
@@ -157,18 +157,18 @@ void loop()
 
   ui.getPlatformAngles(angles);
 
-  // robot1.calcPositions(
-  //   {
-  //     {0.0},
-  //     {0.0},
-  //     {0.0}
-  //   },
-  //   {
-  //     {angles.at(0)},
-  //     {angles.at(1)},
-  //     {angles.at(2)}
-  //   }
-  // );
+  robot1.calcPositions(
+    {
+      {0.0},
+      {0.0},
+      {0.0}
+    },
+    {
+      {angles.at(0)},
+      {angles.at(1)},
+      {angles.at(2)}
+    }
+  );
 
   robot1.move();
 
