@@ -19,6 +19,9 @@ namespace robo
             /// @brief Current coordinates of platform vertices
             math::Matrix<real> vertices_curr_coords_;
 
+            /// @brief Change of vertices coordinates
+            math::Matrix<real> vertices_diff_coords_;
+
         public:
             virtual ~SteppedRobot() {};
 

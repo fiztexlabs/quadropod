@@ -5,18 +5,18 @@
 
 using namespace robo;
 
-void Limb::calcServoPos(const math::Matrix<real> &coord)
+void Limb::calcServoPos()
 {
     // calc target servos angles
 
     math::Matrix<real> target_coords_2d_ =
         {
-            {std::sqrt(std::pow(coord(0, 0), static_cast<real>(2.0)) + std::pow(coord(1, 0), static_cast<real>(2.0)))},
-            {coord(2, 0)}
+            {std::sqrt(std::pow(target_coords_(0, 0), static_cast<real>(2.0)) + std::pow(target_coords_(1, 0), static_cast<real>(2.0)))},
+            {target_coords_(2, 0)}
         };
 
     servo_target_pos_(0, 0) =
-        std::acos(std::max(static_cast<real>(-1.0), std::min(static_cast<real>(1.0), coord(0, 0) / std::sqrt(std::pow(coord(0, 0), static_cast<real>(2.0)) + std::pow(coord(1, 0), static_cast<real>(2.0)))))) * (180.0/M_PI);
+        std::acos(std::max(static_cast<real>(-1.0), std::min(static_cast<real>(1.0), target_coords_(0, 0) / std::sqrt(std::pow(target_coords_(0, 0), static_cast<real>(2.0)) + std::pow(target_coords_(1, 0), static_cast<real>(2.0)))))) * (180.0/M_PI);
 
     real L03 = std::sqrt(
         std::pow(target_coords_2d_(0, 0), static_cast<real>(2.0)) + std::pow(target_coords_2d_(1, 0), static_cast<real>(2.0))
@@ -36,7 +36,7 @@ void Limb::calcServoPos(const math::Matrix<real> &coord)
     ) * (180.0/M_PI);
 
     // invert, if Z > 0
-    servo_target_pos_(1, 0) = coord(2,0) > static_cast<real>(0.0) ? f03 - f13 : 360.0 - f03 - f13;
+    servo_target_pos_(1, 0) = target_coords_(2,0) > static_cast<real>(0.0) ? f03 - f13 : 360.0 - f03 - f13;
 
     servo_target_pos_(2, 0) = std::acos(
         std::max(static_cast<real>(-1.0), std::min(static_cast<real>(1.0), (L13 * L13 - L_(1, 0) * L_(1, 0) - L_(2, 0) * L_(2, 0)) / (static_cast<real>(-2.0) * L_(1, 0) * L_(2, 0))))
@@ -62,6 +62,11 @@ void Limb::calcServoPos(const math::Matrix<real> &coord)
     // Serial.println("");
 }
 
+void robo::Limb::getCurrentTargetCoords(math::Matrix<real> &coords)
+{
+    coords = target_coords_;
+}
+
 Servo *robo::Limb::getServo(const size_t idx)
 {
     return &servo_.at(idx);
@@ -73,6 +78,13 @@ void robo::Limb::begin()
     {
         servo.begin();
     }
+    calcServoPos();
+}
+
+void robo::Limb::calcServoPos(const math::Matrix<real> &coord)
+{
+    target_coords_ = coord;
+    calcServoPos();
 }
 
 bool robo::Limb::move()

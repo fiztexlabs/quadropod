@@ -45,6 +45,9 @@ namespace robo
         /// @brief Servos
         std::vector<Servo> servo_;
 
+        /// @brief Target limb foot coordinates
+        math::Matrix<real> target_coords_ = math::Matrix<real>(3, 1);
+
     public:
         /// @brief Default constructor
         Limb(){
@@ -69,13 +72,20 @@ namespace robo
                 {0.0},
                 {0.0}
             },
-            const std::string &name = "") : 
+            const std::string &name = "",
+            const math::Matrix<real> &init_target_coords =
+            {
+                {0.0},
+                {0.0},
+                {0.0}
+            }) : 
             L_(L), 
             servo_pins_(servo_pins),
             pwm_(pwm), 
             vertex_num_(L.rows()),
             servo_zero_pos_(servo_zero_pos),
-            name_(name)
+            name_(name),
+            target_coords_(init_target_coords)
         {
             // check inputs
             if (L_.rows() != 3)
@@ -111,10 +121,17 @@ namespace robo
 
         void begin();
 
+        /// @brief Compute target servos angles with defined target_coords value
+        void calcServoPos();
+
         /// @brief Set target coordinates of the limb end (foot) and compute
         /// target servos angles
         void calcServoPos(const math::Matrix<real> &coords);
-            
+        
+        /// @brief Get current target coordinates of limb foot (in local coordinate system)
+        /// @param[out] coords: Coordinates
+        void getCurrentTargetCoords(math::Matrix<real> &coords);
+
         /// @brief Get limb servo by idx
         /// @param idx: Index of the limb servo
         /// @return Pointer to the servo object

@@ -3,7 +3,7 @@
 namespace math
 {
 	/// @brief Precision
-#define MATH_DOUBLE_PRECISION_DEFINE
+// #define MATH_DOUBLE_PRECISION_DEFINE
 #ifdef MATH_DOUBLE_PRECISION_DEFINE
 	typedef double real;
 #else

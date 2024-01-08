@@ -64,6 +64,8 @@ namespace robo
                 platform_base_coords_ = platform_base_coords;
                 serial_ = serial;
 
+                vertices_diff_coords_ = math::Matrix<real>(legs_num_, 3);
+
                 /// @brief Created robots counter
                 static int cnt_;
 

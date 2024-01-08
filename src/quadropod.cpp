@@ -41,30 +41,38 @@ void robo::Quadropod::checkInputs(
 
 void robo::Quadropod::calcPositions(const math::Matrix<real> &coords, const math::Matrix<real> &angles)
 {
+    // convert angles to radians
+    math::Matrix<real> angles_r = angles;
+    size_t i = 0;
+    for (size_t i = 0; i < 3; ++i)
+    {
+        angles_r(i, 0) = angles(i, 0) * (PI / 180.0);
+    }
+
     // compute movement matrices
 
     M_ox_ = 
         {
-            {static_cast<real>(1.0), static_cast<real>(0.0),   static_cast<real>(0.0),     platform_curr_coords_(0, 0) - coords(0, 0)},
-            {static_cast<real>(0.0), std::cos(angles(0, 0)),   -std::sin(angles(0, 0)),    platform_curr_coords_(0, 1) - coords(0, 1)},
-            {static_cast<real>(0.0), std::sin(angles(0, 0)),   std::cos(angles(0, 0)),     platform_curr_coords_(0, 2) - coords(0, 2)},
-            {static_cast<real>(0.0), static_cast<real>(0.0),   static_cast<real>(0.0),     static_cast<real>(1.0)                    }
+            {static_cast<real>(1.0),      static_cast<real>(0.0),      static_cast<real>(0.0),       platform_curr_coords_(0, 0) - coords(0, 0)},
+            {static_cast<real>(0.0),      std::cos(angles_r(0, 0)),    -std::sin(angles_r(0, 0)),    platform_curr_coords_(0, 1) - coords(0, 1)},
+            {static_cast<real>(0.0),      std::sin(angles_r(0, 0)),    std::cos(angles_r(0, 0)),     platform_curr_coords_(0, 2) - coords(0, 2)},
+            {static_cast<real>(0.0),      static_cast<real>(0.0),      static_cast<real>(0.0),       static_cast<real>(1.0)                    }
         };
 
     M_oy_ = 
         {
-            {std::cos(angles(0, 1)),    static_cast<real>(0.0),    std::sin(angles(0, 1)), platform_curr_coords_(0, 0) - coords(0, 0)},
-            {static_cast<real>(0.0),    static_cast<real>(1.0),    static_cast<real>(0.0), platform_curr_coords_(0, 1) - coords(0, 1)},
-            {-std::sin(angles(0, 1)),   static_cast<real>(0.0),    std::cos(angles(0, 1)), platform_curr_coords_(0, 2) - coords(0, 2)},
-            {static_cast<real>(0.0),    static_cast<real>(0.0),    static_cast<real>(0.0), static_cast<real>(1.0)                    }
+            {std::cos(angles_r(1, 0)),    static_cast<real>(0.0),      std::sin(angles_r(1, 0)),    platform_curr_coords_(0, 0) - coords(0, 0)},
+            {static_cast<real>(0.0),      static_cast<real>(1.0),      static_cast<real>(0.0),      platform_curr_coords_(0, 1) - coords(0, 1)},
+            {-std::sin(angles_r(1, 0)),   static_cast<real>(0.0),      std::cos(angles_r(1, 0)),    platform_curr_coords_(0, 2) - coords(0, 2)},
+            {static_cast<real>(0.0),      static_cast<real>(0.0),      static_cast<real>(0.0),      static_cast<real>(1.0)                    }
         };
 
     M_oz_ = 
         {
-            {std::cos(angles(0, 0)),    -std::sin(angles(0, 0)),    static_cast<real>(0.0),    platform_curr_coords_(0, 0) - coords(0, 0)},
-            {std::sin(angles(0, 0)),    std::cos(angles(0, 0)),     static_cast<real>(0.0),    platform_curr_coords_(0, 1) - coords(0, 1)},
-            {static_cast<real>(0.0),    static_cast<real>(0.0),     static_cast<real>(1.0),    platform_curr_coords_(0, 2) - coords(0, 2)},
-            {static_cast<real>(0.0),    static_cast<real>(0.0),     static_cast<real>(0.0),    static_cast<real>(1.0)                    }
+            {std::cos(angles_r(2, 0)),    -std::sin(angles_r(2, 0)),   static_cast<real>(0.0),      platform_curr_coords_(0, 0) - coords(0, 0)},
+            {std::sin(angles_r(2, 0)),    std::cos(angles_r(2, 0)),    static_cast<real>(0.0),      platform_curr_coords_(0, 1) - coords(0, 1)},
+            {static_cast<real>(0.0),      static_cast<real>(0.0),      static_cast<real>(1.0),      platform_curr_coords_(0, 2) - coords(0, 2)},
+            {static_cast<real>(0.0),      static_cast<real>(0.0),      static_cast<real>(0.0),      static_cast<real>(1.0)                    }
         };
     
     // found new vertices coordinates
@@ -87,9 +95,17 @@ void robo::Quadropod::calcPositions(const math::Matrix<real> &coords, const math
         vertices_new_coords(i, 3) = v1(0, 3);
     }
 
+    vertices_diff_coords_ = vertices_new_coords - vertices_curr_coords_;
     vertices_curr_coords_ = vertices_new_coords;
 
-    
+    // calc new coordinates of limbs foots
+    math::Matrix<real> curr_foot_coords;
+    for (auto &limb : limbs_)
+    {
+        limb->getCurrentTargetCoords(curr_foot_coords);
+        limb->calcServoPos(
+            curr_foot_coords - vertices_diff_coords_);
+    }
 }
 
 void robo::Quadropod::move()

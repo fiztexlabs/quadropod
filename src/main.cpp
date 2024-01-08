@@ -32,7 +32,12 @@ robo::Quadropod robot1 = robo::Quadropod(
         {90.0},
         {0.0}
       },
-      "leg0"
+      "leg0",
+      {
+        {0.07},
+        {0.07},
+        {-0.07}
+      }
     ),
     new robo::Limb(
       {
@@ -47,7 +52,12 @@ robo::Quadropod robot1 = robo::Quadropod(
         {270.0},
         {180.0}
       },
-      "leg1"
+      "leg1",
+      {
+        {0.07},
+        {0.07},
+        {-0.07}
+      }
     ),
     new robo::Limb(
       {
@@ -62,7 +72,12 @@ robo::Quadropod robot1 = robo::Quadropod(
         {270.0},
         {180.0}
       },
-      "leg2"
+      "leg2",
+      {
+        {0.07},
+        {0.07},
+        {-0.07}
+      }
     ),
     new robo::Limb(
       {
@@ -77,13 +92,18 @@ robo::Quadropod robot1 = robo::Quadropod(
         {90.0},
         {0.0}
       },
-      "leg3"
+      "leg3",
+      {
+        {0.07},
+        {0.07},
+        {-0.07}
+      }
     )
   },
   {
     {-0.04, -0.04,  0.04,  0.04 },
     {-0.04, 0.04,   0.04,  -0.04},
-    {0.03,  0.03,   0.03,  0.03 }
+    {0.0,   0.0,    0.0,   0.0 }
   }
 );
 
@@ -137,10 +157,25 @@ void loop()
 
   ui.getPlatformAngles(angles);
 
-  robot1.getLeg(0)->move();
-  robot1.getLeg(1)->move();
-  robot1.getLeg(2)->move();
-  robot1.getLeg(3)->move();
+  // robot1.calcPositions(
+  //   {
+  //     {0.0},
+  //     {0.0},
+  //     {0.0}
+  //   },
+  //   {
+  //     {angles.at(0)},
+  //     {angles.at(1)},
+  //     {angles.at(2)}
+  //   }
+  // );
+
+  robot1.move();
+
+  // robot1.getLeg(0)->move();
+  // robot1.getLeg(1)->move();
+  // robot1.getLeg(2)->move();
+  // robot1.getLeg(3)->move();
   
   // robot1.getLeg(1)->calcServoPos(
   //   {
@@ -181,34 +216,34 @@ void loop()
   // );
 
   
-  robot1.getLeg(0)->calcServoPos(
-    {
-      {angles.at(0)},
-      {angles.at(1)},
-      {angles.at(2)}
-    }
-  );
-  robot1.getLeg(1)->calcServoPos(
-    {
-      {angles.at(0)},
-      {angles.at(1)},
-      {angles.at(2)}
-    }
-  );
-  robot1.getLeg(2)->calcServoPos(
-    {
-      {angles.at(0)},
-      {angles.at(1)},
-      {angles.at(2)}
-    }
-  );
-  robot1.getLeg(3)->calcServoPos(
-    {
-      {angles.at(0)},
-      {angles.at(1)},
-      {angles.at(2)}
-    }
-  );
+  // robot1.getLeg(0)->calcServoPos(
+  //   {
+  //     {angles.at(0)},
+  //     {angles.at(1)},
+  //     {angles.at(2)}
+  //   }
+  // );
+  // robot1.getLeg(1)->calcServoPos(
+  //   {
+  //     {angles.at(0)},
+  //     {angles.at(1)},
+  //     {angles.at(2)}
+  //   }
+  // );
+  // robot1.getLeg(2)->calcServoPos(
+  //   {
+  //     {angles.at(0)},
+  //     {angles.at(1)},
+  //     {angles.at(2)}
+  //   }
+  // );
+  // robot1.getLeg(3)->calcServoPos(
+  //   {
+  //     {angles.at(0)},
+  //     {angles.at(1)},
+  //     {angles.at(2)}
+  //   }
+  // );
 
   // robot1.getLeg(0)->getServo(0)->setTargetPosition(angles.at(0));
   // robot1.getLeg(0)->getServo(1)->setTargetPosition(angles.at(1));
