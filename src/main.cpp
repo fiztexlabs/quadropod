@@ -8,6 +8,7 @@
 #include <web_interface.h>
 #include <vector>
 #include <defines.h>
+#include <ArduinoOTA.h>
 
 robo::WebInterface ui = robo::WebInterface(
     "SheldonWiFi_2.4GHz",
@@ -112,6 +113,10 @@ void setup()
   Wire.begin(5, 4);
   robot1.begin();
 
+  
+  // setup OTA
+  // ArduinoOTA.begin(WiFi.localIP(),"Quadropod","password",InternalStorage);
+
   // pwm.begin();
   // leg1.begin();
 
@@ -126,6 +131,8 @@ void setup()
 
 void loop()
 {
+  // ArduinoOTA.poll();
+  
   ui.handle();
 
   ui.getPlatformAngles(angles);
