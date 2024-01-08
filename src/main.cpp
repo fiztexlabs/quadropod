@@ -132,7 +132,6 @@ void setup()
 
   Wire.begin(5, 4);
   robot1.begin();
-
   
   // setup OTA
   // ArduinoOTA.begin(WiFi.localIP(),"Quadropod","password",InternalStorage);
@@ -155,7 +154,13 @@ void loop()
   
   ui.handle();
 
-  ui.getPlatformAngles(angles);
+  // ui.getPlatformAngles(angles);
+  angles = 
+  {
+    {0.0},
+    {0.0},
+    {40.0}
+  };
 
   robot1.calcPositions(
     {
@@ -169,7 +174,7 @@ void loop()
       {angles.at(2)}
     }
   );
-
+  
   robot1.move();
 
   // robot1.getLeg(0)->move();

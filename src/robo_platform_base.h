@@ -19,6 +19,9 @@ namespace robo
             /// @brief Current platform coordinates
             math::Matrix<real> platform_curr_coords_;
 
+            /// @brief Platform angles
+            math::Matrix<real> platform_angles_ = math::Matrix<real>(3, 1);
+
             /// @brief Pointer to the serial object for output giagnostic information
             HardwareSerial* serial_ = nullptr;
 

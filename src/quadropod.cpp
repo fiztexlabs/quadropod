@@ -41,8 +41,19 @@ void robo::Quadropod::checkInputs(
 
 void robo::Quadropod::calcPositions(const math::Matrix<real> &movement, const math::Matrix<real> &angles)
 {
-    // convert angles to radians
-    math::Matrix<real> angles_r = (PI / 180.0) * angles;
+    math::Matrix<real> angles_r;
+    if (platform_angles_.compare(angles))
+    {
+        angles_r = math::Matrix<real>(3, 1);
+    }
+    else
+    {
+        math::Matrix<real> diff_a = angles - platform_angles_;
+        platform_angles_ = angles;
+
+        // convert angles to radians
+        angles_r = (PI / 180.0) * diff_a;
+    }
 
     // compute movement matrices
 
