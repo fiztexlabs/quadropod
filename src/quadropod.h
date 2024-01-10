@@ -29,34 +29,44 @@ namespace robo
             /**
              * @brief Qaudruped robot constructor
              * @param limbs: Vector of robot limbs, for quadruped robots length must be equal to 4
+             * @param limbs_rotation Rotation angles between global roboplatform coordinate system and
+             * local limb coordinate system
              * @param vertices_base_coords: 4x3 Matrix, rows values represents x y ad z coordinates,
              * cols - robot legs. Coordinates defined relative to robot platfor median center
+             * @param name: Roboplatform name
              * @param platform_base_coords: Initial coordinates of robot position: 4x6 Matrix,
              * rows represents coordinates x, y, z and angles p, f, a4 cols - represents legs
              * @param serial: Pointer to serial port, which robot will be use for output diagnostic 
              * information
             */
             Quadropod(
-                const std::vector<Limb*>& limbs,
-                const math::Matrix<real>& vertices_base_coords,
-                const String& name = "",
-                const math::Matrix<real>& platform_base_coords = 
-                {
-                    {0.0, 0.0, 0.0, 0.0},
-                    {0.0, 0.0, 0.0, 0.0},
-                    {0.0, 0.0, 0.0, 0.0},
-                    {0.0, 0.0, 0.0, 0.0},
-                    {0.0, 0.0, 0.0, 0.0},
-                    {0.0, 0.0, 0.0, 0.0}
-                },
-                HardwareSerial* serial = &Serial
-            )
+                const std::vector<Limb *> &limbs,
+                const math::Matrix<real> &vertices_base_coords,
+                const std::vector<real> &limbs_rotation = {0.0, 0.0, 0.0, 0.0},
+                const math::Matrix<real> &limb_axis_direction =
+                    {
+                        {1.0, 1.0, 1.0, 1.0},
+                        {1.0, 1.0, 1.0, 1.0},
+                        {1.0, 1.0, 1.0, 1.0}},
+                const String &name = "",
+                const math::Matrix<real> &platform_base_coords =
+                    {
+                        {0.0, 0.0, 0.0, 0.0},
+                        {0.0, 0.0, 0.0, 0.0},
+                        {0.0, 0.0, 0.0, 0.0},
+                        {0.0, 0.0, 0.0, 0.0},
+                        {0.0, 0.0, 0.0, 0.0},
+                        {0.0, 0.0, 0.0, 0.0}},
+                HardwareSerial *serial = &Serial)
             {
                 checkInputs(
                     limbs,
                     vertices_base_coords,
                     platform_base_coords
                 );
+
+                limb_local_coord_system_rot_ = limbs_rotation;
+                limb_local_axis_direction_ = limb_axis_direction;
 
                 limbs_ = limbs;
                 vertices_base_coords_ = vertices_base_coords;
@@ -65,7 +75,13 @@ namespace robo
                 platform_base_coords_ = platform_base_coords;
                 serial_ = serial;
 
-                vertices_diff_coords_ = math::Matrix<real>(legs_num_, 3);
+                vertices_diff_coords_ = math::Matrix<real>(3, legs_num_);
+
+                M_rot_ = std::vector<math::Matrix<real>>(legs_num_);
+                for (size_t j = 0; j < legs_num_; ++j)
+                {
+                    buildMovementMatrix("OZ", limb_local_coord_system_rot_.at(j), M_rot_.at(j));
+                }
 
                 /// @brief Created robots counter
                 static int cnt_;
