@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
 
     <title>Quadropod DEBUG</title>
-	
-	<style>
+    <meta name="viewport" content="user-scalable=no">
+	<!-- <style>
 		button {
 			display:block;
 		}
@@ -16,10 +16,21 @@
 		span {
 			display:block;
 		}
-	</style>
+	</style> -->
 	
   </head>
-  <body>
+  <body  style="position: fixed; font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif ;
+  color:rgb(128, 128, 128);
+  font-size: xx-large;">
+	  <h1 style="text-align:center">
+		  Quadropod </h1>
+	  <p style="text-align: center;">
+		  OX: <span id="x_coordinate"> </span>
+		  OY: <span id="y_coordinate"> </span>
+		  <!-- Speed: <span id="speed"> </span> % -->
+		  <!-- Angle: <span id="angle"> </span> -->
+	  </p>
+	  <canvas id="canvas" name="game"></canvas>
 	<!-- <span class="badge badge-default" id="Status">LED status: full auto</span> 
 	<button type="button" class="btn btn-success" id="LedOnButton">
 		LED On
@@ -30,7 +41,7 @@
 	<button type="button" class="btn btn-outline-success" id="SetFullAutoButton">
 		Set full automatic mode
 	</button> -->
-	<span id="a_ox">Angle OX: 0 deg</span> 
+	<!-- <span id="a_ox">Angle OX: 0 deg</span> 
 	<form action="" method="post">
 		<label for="angle_ox_value">Angle OX:</label>
 		<input type="text" name="name" size="10" id="angle_ox_value"> 
@@ -55,7 +66,7 @@
 		<button type="submitbutton" class="btn btn-outline-success" id="SetAngleOZ">
 			Set OZ angle
 		</button>
-	</form>
+	</form> -->
 	<!-- <div>
 		<input type="color" id="Color" name="Color"
 			value="#808080">
@@ -74,80 +85,249 @@
 	</form> -->
 </div>
 	<script>
-		// OX angle
-		var a_ox = document.getElementById("angle_ox_value");
-		var set_a_ox_button = document.getElementById("SetAngleOX");
-		function set_a_ox()
-		{
+        var canvas, ctx;
+
+        window.addEventListener('load', () => {
+
+            canvas = document.getElementById('canvas');
+            ctx = canvas.getContext('2d');          
+            resize(); 
+
+            document.addEventListener('mousedown', startDrawing);
+            document.addEventListener('mouseup', stopDrawing);
+            document.addEventListener('mousemove', Draw);
+
+            document.addEventListener('touchstart', startDrawing);
+            document.addEventListener('touchend', stopDrawing);
+            document.addEventListener('touchcancel', stopDrawing);
+            document.addEventListener('touchmove', Draw);
+            window.addEventListener('resize', resize);
+
+            document.getElementById("x_coordinate").innerText = 0;
+            document.getElementById("y_coordinate").innerText = 0;
+            // document.getElementById("speed").innerText = 0;
+            // document.getElementById("angle").innerText = 0;
+        });
+
+      
+
+
+        var width, height, radius, x_orig, y_orig;
+        function resize() {
+            width = window.innerWidth;
+            radius = 200;
+            height = radius * 6.5;
+            ctx.canvas.width = width;
+            ctx.canvas.height = height;
+            background();
+            joystick(width / 2, height / 3);
+        }
+
+        function background() {
+            x_orig = width / 2;
+            y_orig = height / 3;
+
+            ctx.beginPath();
+            ctx.arc(x_orig, y_orig, radius + 20, 0, Math.PI * 2, true);
+            ctx.fillStyle = '#ECE5E5';
+            ctx.fill();
+        }
+
+        function joystick(width, height) {
+            ctx.beginPath();
+            ctx.arc(width, height, radius, 0, Math.PI * 2, true);
+            ctx.fillStyle = '#F08080';
+            ctx.fill();
+            ctx.strokeStyle = '#F6ABAB';
+            ctx.lineWidth = 8;
+            ctx.stroke();
+        }
+
+        let coord = { x: 0, y: 0 };
+        let paint = false;
+
+        function getPosition(event) {
+            var mouse_x = event.clientX || event.touches[0].clientX;
+            var mouse_y = event.clientY || event.touches[0].clientY;
+            coord.x = mouse_x - canvas.offsetLeft;
+            coord.y = mouse_y - canvas.offsetTop;
+        }
+
+        function is_it_in_the_circle() {
+            var current_radius = Math.sqrt(Math.pow(coord.x - x_orig, 2) + Math.pow(coord.y - y_orig, 2));
+            if (radius >= current_radius) return true
+            else return false
+        }
+
+
+        function startDrawing(event) {
+            paint = true;
+            getPosition(event);
+            if (is_it_in_the_circle()) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                background();
+                joystick(coord.x, coord.y);
+                Draw(event);
+            }
+        }
+
+
+        function stopDrawing() {
+            paint = false;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            background();
+            joystick(width / 2, height / 3);
+            document.getElementById("x_coordinate").innerText = 0;
+            document.getElementById("y_coordinate").innerText = 0;
+            // document.getElementById("speed").innerText = 0;
+            // document.getElementById("angle").innerText = 0;
+
 			var request = new XMLHttpRequest();
-			request.open('POST',"/set_a_ox?a_ox="+a_ox.value,false);
+			request.open('POST',"/set_a_ox?a_ox="+0,false);
 			request.send();
-			get_a_ox();
-		}
-		function get_a_ox()
-		{
-			var request = new XMLHttpRequest();
-			request.open('GET','/get_a_ox',true);
+			request.open('POST',"/set_a_oy?a_oy="+0,false);
 			request.send();
-			request.onload = function() {
-				if (request.readyState == 4 && request.status == 200) {
-					var response = request.responseText;
-					document.getElementById("a_ox").textContent="Angle OX: "+response+" deg";
-				}
-			}
-		}
-		document.addEventListener('DOMContentLoaded', get_a_ox);
-		set_a_ox_button.addEventListener('click', set_a_ox);
+
+        }
+
+        function Draw(event) {
+
+            if (paint) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                background();
+                var angle_in_degrees,x, y, speed;
+                var angle = Math.atan2((coord.y - y_orig), (coord.x - x_orig));
+
+                if (Math.sign(angle) == -1) {
+                    angle_in_degrees = Math.round(-angle * 180 / Math.PI);
+                }
+                else {
+                    angle_in_degrees =Math.round( 360 - angle * 180 / Math.PI);
+                }
+
+
+                if (is_it_in_the_circle()) {
+                    joystick(coord.x, coord.y);
+                    x = coord.x;
+                    y = coord.y;
+                }
+                else {
+                    x = radius * Math.cos(angle) + x_orig;
+                    y = radius * Math.sin(angle) + y_orig;
+                    joystick(x, y);
+                }
+
+            
+                getPosition(event);
+
+                var speed =  Math.round(100 * Math.sqrt(Math.pow(x - x_orig, 2) + Math.pow(y - y_orig, 2)) / radius);
+
+                var x_relative = Math.round(x - x_orig)/5;
+                var y_relative = Math.round(y - y_orig)/5;
+                
+
+                document.getElementById("x_coordinate").innerText = x_relative;
+                document.getElementById("y_coordinate").innerText = y_relative ;
+                // document.getElementById("speed").innerText = speed;
+                // document.getElementById("angle").innerText = angle_in_degrees;
+
+                // send( x_relative,y_relative,speed,angle_in_degrees);
+
+				var request = new XMLHttpRequest();
+				request.open('POST',"/set_a_ox?a_ox="+y_relative,false);
+				request.send();
+				request.open('POST',"/set_a_oy?a_oy="+x_relative,false);
+				request.send();
+				// get_a_ox();
+            }
+        } 
+
+
+
+
+
+
+
+
+
+
+
+
+		// // OX angle
+		// var a_ox = document.getElementById("angle_ox_value");
+		// var set_a_ox_button = document.getElementById("SetAngleOX");
+		// function set_a_ox()
+		// {
+		// 	var request = new XMLHttpRequest();
+		// 	request.open('POST',"/set_a_ox?a_ox="+a_ox.value,false);
+		// 	request.send();
+		// 	get_a_ox();
+		// }
+		// function get_a_ox()
+		// {
+		// 	var request = new XMLHttpRequest();
+		// 	request.open('GET','/get_a_ox',true);
+		// 	request.send();
+		// 	request.onload = function() {
+		// 		if (request.readyState == 4 && request.status == 200) {
+		// 			var response = request.responseText;
+		// 			document.getElementById("a_ox").textContent="Angle OX: "+response+" deg";
+		// 		}
+		// 	}
+		// }
+		// document.addEventListener('DOMContentLoaded', get_a_ox);
+		// set_a_ox_button.addEventListener('click', set_a_ox);
 		
-		// OY angle
-		var a_oy = document.getElementById("angle_oy_value");
-		var set_a_oy_button = document.getElementById("SetAngleOY");
-		function set_a_oy()
-		{
-			var request = new XMLHttpRequest();
-			request.open('POST',"/set_a_oy?a_oy="+a_oy.value,false);
-			request.send();
-			get_a_oy();
-		}
-		function get_a_oy()
-		{
-			var request = new XMLHttpRequest();
-			request.open('GET','/get_a_oy',true);
-			request.send();
-			request.onload = function() {
-				if (request.readyState == 4 && request.status == 200) {
-					var response = request.responseText;
-					document.getElementById("a_oy").textContent="Angle OY: "+response+" deg";
-				}
-			}
-		}
-		document.addEventListener('DOMContentLoaded', get_a_oy);
-		set_a_oy_button.addEventListener('click', set_a_oy);
+		// // OY angle
+		// var a_oy = document.getElementById("angle_oy_value");
+		// var set_a_oy_button = document.getElementById("SetAngleOY");
+		// function set_a_oy()
+		// {
+		// 	var request = new XMLHttpRequest();
+		// 	request.open('POST',"/set_a_oy?a_oy="+a_oy.value,false);
+		// 	request.send();
+		// 	get_a_oy();
+		// }
+		// function get_a_oy()
+		// {
+		// 	var request = new XMLHttpRequest();
+		// 	request.open('GET','/get_a_oy',true);
+		// 	request.send();
+		// 	request.onload = function() {
+		// 		if (request.readyState == 4 && request.status == 200) {
+		// 			var response = request.responseText;
+		// 			document.getElementById("a_oy").textContent="Angle OY: "+response+" deg";
+		// 		}
+		// 	}
+		// }
+		// document.addEventListener('DOMContentLoaded', get_a_oy);
+		// set_a_oy_button.addEventListener('click', set_a_oy);
 		
-		// OZ angle
-		var a_oz = document.getElementById("angle_oz_value");
-		var set_a_oz_button = document.getElementById("SetAngleOZ");
-		function set_a_oz()
-		{
-			var request = new XMLHttpRequest();
-			request.open('POST',"/set_a_oz?a_oz="+a_oz.value,false);
-			request.send();
-			get_a_oz();
-		}
-		function get_a_oz()
-		{
-			var request = new XMLHttpRequest();
-			request.open('GET','/get_a_oz',true);
-			request.send();
-			request.onload = function() {
-				if (request.readyState == 4 && request.status == 200) {
-					var response = request.responseText;
-					document.getElementById("a_oz").textContent="Angle OZ: "+response+" deg";
-				}
-			}
-		}
-		document.addEventListener('DOMContentLoaded', get_a_oz);
-		set_a_oz_button.addEventListener('click', set_a_oz);
+		// // OZ angle
+		// var a_oz = document.getElementById("angle_oz_value");
+		// var set_a_oz_button = document.getElementById("SetAngleOZ");
+		// function set_a_oz()
+		// {
+		// 	var request = new XMLHttpRequest();
+		// 	request.open('POST',"/set_a_oz?a_oz="+a_oz.value,false);
+		// 	request.send();
+		// 	get_a_oz();
+		// }
+		// function get_a_oz()
+		// {
+		// 	var request = new XMLHttpRequest();
+		// 	request.open('GET','/get_a_oz',true);
+		// 	request.send();
+		// 	request.onload = function() {
+		// 		if (request.readyState == 4 && request.status == 200) {
+		// 			var response = request.responseText;
+		// 			document.getElementById("a_oz").textContent="Angle OZ: "+response+" deg";
+		// 		}
+		// 	}
+		// }
+		// document.addEventListener('DOMContentLoaded', get_a_oz);
+		// set_a_oz_button.addEventListener('click', set_a_oz);
 	</script>
   </body>
+  
 </html>

@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>
-        Mousebot
+        Quadropod DEBUG
     </title>
     <meta name="viewport" content="user-scalable=no">
 </head>
@@ -10,7 +10,7 @@
 color:rgb(128, 128, 128);
 font-size: xx-large;">
     <h1 style="text-align:center">
-        MOUSEBOT </h1>
+        Quadropod </h1>
     <p style="text-align: center;">
         X: <span id="x_coordinate"> </span>
         Y: <span id="y_coordinate"> </span>
@@ -18,7 +18,7 @@ font-size: xx-large;">
         Angle: <span id="angle"> </span>
     </p>
     <canvas id="canvas" name="game"></canvas>
-    <script>
+    <!-- <script>
         var connection = new WebSocket('ws://' + "192.168.4.1" + ':81/', ['arduino']);
         connection.onopen = function () {
             connection.send('Connect ' + new Date());
@@ -39,7 +39,7 @@ font-size: xx-large;">
         }
 
 
-    </script>
+    </script> -->
     <script>
         var canvas, ctx;
 
